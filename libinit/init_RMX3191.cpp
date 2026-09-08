@@ -164,6 +164,9 @@ void vendor_load_properties() {
         set_device_props("RMX3191", "Realme C25");
     }
 
+    property_override("ro.build.display.id",
+                      "TQ3A.230901.001 release-keys");
+
     load_dalvik_properties();
     set_avoid_gfxaccel_config();
     init_opperator_name_properties();

@@ -142,7 +142,7 @@ PRODUCT_PACKAGES += \
 
 # Fingerprint
 PRODUCT_PACKAGES += \
-    android.hardware.biometrics.fingerprint@2.1-service.RMX3191
+    android.hardware.biometrics.fingerprint@2.1-service.even
 
 # Gatekeeper
 PRODUCT_PACKAGES += \
