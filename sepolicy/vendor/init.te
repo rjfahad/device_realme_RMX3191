@@ -30,5 +30,12 @@ allow init sysfs_power_tunable:file { open write };
 allow init sysfs_swap:file { open write };
 allow init sysfs_cpu_eas:file { open write };
 
+# Egistec fingerprint sysfs (chmod/chown from RC)
+allow init sysfs_egis_fp:dir { search write setattr };
+allow init sysfs_egis_fp:file { open write setattr };
+
+# Fingerprint device node setattr (chown from RC)
+allow init fp_device:chr_file setattr;
+
 # Sensor sysfs setattr
 allow init sysfs_sensor:file setattr;

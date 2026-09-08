@@ -26,6 +26,9 @@ genfscon sysfs /devices/platform/battery/power_supply/bms     	       	       	 
 genfscon sysfs /devices/platform/11004000.i2c7/i2c-7/7-0055/power_supply/parallel                                               u:object_r:sysfs_parallel_supply:s0
 genfscon sysfs /devices/platform/mt_usb/saving                                                                                  u:object_r:sysfs_mtusb_saving:s0
 
+# Egistec fingerprint sysfs
+genfscon sysfs /bus/platform/devices/egis_input                            u:object_r:sysfs_egis_fp:s0
+
 # OPLUS
 genfscon proc /fp_id                                                        u:object_r:proc_oplus_fp:s0
 genfscon proc /oppoVersion/prjVersion                                       u:object_r:proc_oplus_ver:s0

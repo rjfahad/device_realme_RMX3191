@@ -13,8 +13,20 @@ allow hal_fingerprint_default proc_oplus_fp:file r_file_perms;
 allow hal_fingerprint_default mobicore_user_device:chr_file rw_file_perms;
 allow hal_fingerprint_default self:netlink_socket create_socket_perms_no_ioctl;
 
+# HBM for optical fingerprint sensor brightness
+allow hal_fingerprint_default sysfs_hbm:file { read write open };
+
+# Egistec fingerprint navigation sysfs
+allow hal_fingerprint_default sysfs_egis_fp:dir search;
+allow hal_fingerprint_default sysfs_egis_fp:file { read write open ioctl };
+
+# Fingerprint data storage
+allow hal_fingerprint_default vendor_data_file:dir { create write add_name remove_name search };
+allow hal_fingerprint_default vendor_data_file:file { create write open read getattr setattr };
+
 set_prop(hal_fingerprint_default, vendor_oplus_fingerprint_prop);
 set_prop(hal_fingerprint_default, system_oplus_fingerprint_prop);
+get_prop(hal_fingerprint_default, default_prop)
 
 add_hwservice(hal_fingerprint_default, hal_commondcs_hwservice)
 
