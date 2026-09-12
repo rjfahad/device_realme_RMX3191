@@ -195,11 +195,20 @@
 
 ## Camera HAL Fixes
 
-### vendor/lib[64]/libunwindstack.so (ADDED)
-- Stock `vendor/lib64/libudf.so` requires `unwindstack::Elf::GetRelPc(unsigned long, const unwindstack::MapInfo*)` — the `const` signature
-- LineageOS-built `system/lib64/libunwindstack.so` only exports the non-const signature: `GetRelPc(unsigned long, unwindstack::MapInfo*)`
-- Result: `camerahalserver` crashes in a loop with "CANNOT LINK EXECUTABLE" linker error
-- Fix: ship stock `libunwindstack.so` to `vendor/lib[64]/` so it's found before the system version
+### vendor/lib64/libunwindstack.so (REMOVED) + libudf.so swapped to RMX2020 version
+- Old state: stock `vendor/lib64/libudf.so` required `unwindstack::Elf::GetRelPc(unsigned long, const unwindstack::MapInfo*)` — the `const` signature,
+  so a stock `libunwindstack.so` was shipped to `vendor/lib64/` to satisfy it (camerahalserver "CANNOT LINK EXECUTABLE" fix).
+- Problem: the stale vendor copy shadows the system/VNDK `libunwindstack` at runtime and lacks the `Unwinder` vtable
+  (`_ZTVN11unwindstack8UnwinderE`) that A16 VNDK33 `libbacktrace` needs → `hwcomposer.mt6768.so` fails to load →
+  `IComposer/default` never registers → black screen on A16 GSI (verified live, 2026-09-12).
+- Fix (mirrors sister device RMX2020, which ships no vendor libunwindstack):
+  1. `vendor/lib64/libudf.so` replaced with the RMX2020 copy (53224 bytes). Verified identical: same 7 NEEDED libs,
+     same 35 exports, same undefined symbols — except non-const `GetRelPc`, which VNDK33/system provides.
+  2. `vendor/lib64/libunwindstack.so` deleted from the repo and from `even-vendor.mk`. Vendor consumers
+     (libudf/libaedv/libladder/hwcomposer) now resolve it from system/VNDK, like RMX2020 and like our 32-bit libs already do.
+- Live-device verification: display + touch work, `IComposer/default` registers, `libudf` linker errors gone.
+  (`camerahalserver` still fails on A16 GSI for an unrelated reason: vendor binary needs
+  `RefBase::incStrongRequireStrong` missing from VNDK33 `libbinder` — out of scope.)
 
 ### sepolicy/vendor/property_contexts
 - Added `ro.mtk_cam.` label → `vendor_oplus_camera_prop`

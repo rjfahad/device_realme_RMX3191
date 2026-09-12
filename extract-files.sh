@@ -107,6 +107,10 @@ function blob_fixup {
             ;;
         vendor/etc/init/camerahalserver.rc)
             sed -i 's|writepid /dev/cpuset/camera-daemon/tasks /dev/stune/top-app/tasks|task_profiles CameraServiceCapacity MaxPerformance|g' "$2"
+            # A16 GSI: VNDK33 libbinder imports RefBase::incStrongRequireStrong
+            # from VNDK33 libutils, but the system libutils wins the soname race
+            # and is invisible in sphal -> preload the VNDK copy deterministically
+            grep -q "LD_PRELOAD" "$2" || sed -i '/^    capabilities SYS_NICE/a\    env LD_PRELOAD /apex/com.android.vndk.v33/lib64/libutils.so' "$2"
             ;;
         lib/libshowlogo.so)
             grep -q "libshim_showlogo.so" "${2}" || patchelf --add-needed "libshim_showlogo.so" "${2}"

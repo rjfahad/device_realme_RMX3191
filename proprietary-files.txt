@@ -1,12 +1,14 @@
 # Device proprietary files - From RMX2020-user 11 RP1A.200720.011 RMX2020_11_C.12 release-keys, unless pinned
 
 # AEE
+# NOTE: libudf.so is taken from sister device RMX2020, NOT stock even firmware.
+# Stock even libudf.so needs const MapInfo* GetRelPc (only in old vendor libunwindstack),
+# RMX2020 libudf.so uses non-const GetRelPc (VNDK33-compatible). All 35 exports identical.
+# No vendor libunwindstack.so is shipped (mirrors RMX2020): vendor consumers
+# (libudf/libaedv/libladder/hwcomposer) resolve it from system/VNDK instead.
+# Shipping the old stock vendor copy shadows A16 VNDK and breaks hwcomposer
+# (missing Unwinder vtable -> black screen on A16 GSI). See CHANGES.md Camera HAL Fixes.
 vendor/lib64/libudf.so
-
-# Stock libunwindstack.so - copy of libunwindstack-v30.so (Android 11 VNDK30)
-# Has const MapInfo* signature needed by libudf.so, no libdexfile_support.so dependency
-# (32-bit uses system version fallback, no vendor copy needed)
-vendor/lib64/libunwindstack.so
 
 # Audio
 vendor/lib/libaudio_engineer_test.so
